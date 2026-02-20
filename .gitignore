@@ -3,3 +3,8 @@ target/
 publish/
 *.iml
 .DS_Store
+
+# Windows reserved names / accidental files
+nul
+con
+bash.exe.stackdump

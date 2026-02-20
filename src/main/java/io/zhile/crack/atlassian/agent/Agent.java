@@ -9,8 +9,12 @@ import java.lang.instrument.Instrumentation;
  */
 public class Agent {
     public static void premain(String args, Instrumentation inst) {
+        final String appLibPath = args;
+        if (appLibPath != null && !appLibPath.isEmpty()) {
+            System.out.println("atlassian-agent: application lib path = " + appLibPath);
+        }
         try {
-            inst.addTransformer(new KeyTransformer());
+            inst.addTransformer(new KeyTransformer(appLibPath));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

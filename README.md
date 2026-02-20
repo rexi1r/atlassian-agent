@@ -36,12 +36,17 @@
 * 如果你已经获得`atlassian-agent.jar`，可以试着执行`java -jar atlassian-agent.jar`看看输出的帮助。
 * 这里的帮助以Atlassian家的Confluence服务为例。
 
-**新版本的 Atlassian 服务端（只测试了 Bitbucket）加入了一个证书哈希验证，需要根据 "atlassian-extras-decoder-v2" 支持库的位置进行修改代码：`io.zhile.crack.atlassian.agent.KeyTransformer#handleLicenseDecoder`**
+**新版本 1.1 变更：**
+* 支持通过 agent 参数传入 lib 路径，无需再修改代码：`-javaagent:atlassian-agent.jar=/path/to/你的产品/WEB-INF/lib`
+* 支持 Jira 9.12.25+ 的 KeyManager 公钥注入方式
+* 如不传 lib 路径，仅对旧版产品（KeySpec 方式）有效
 
 ### 配置Agent
 1. 将`atlassian-agent.jar`放在一个你不会随便删除的位置（你服务器上的所有Atlassian服务可共享同一个`atlassian-agent.jar`）。
-2. 设置环境变量`CATALINA_OPTS`（这其实是Tomcat的环境变量，用来指定其启动java程序时附带的参数），把`-javaagent`参数附带上。具体可以这么做：
-   * 你可以把：`export CATALINA_OPTS="-javaagent:/path/to/atlassian-agent.jar ${CATALINA_OPTS}"`这样的命令放到`.bashrc`或`.bash_profile`这样的文件内。
+2. 设置环境变量`CATALINA_OPTS`（这其实是Tomcat的环境变量，用来指定其启动java程序时附带的参数），把`-javaagent`参数附带上。**推荐**传入应用 lib 路径作为参数：
+   * `export CATALINA_OPTS="-javaagent:/path/to/atlassian-agent.jar=/path/to/atlassian-jira/WEB-INF/lib ${CATALINA_OPTS}"`
+   * 或仅 KeySpec 方式（不推荐）：`export CATALINA_OPTS="-javaagent:/path/to/atlassian-agent.jar ${CATALINA_OPTS}"`
+   * 你可以把上述命令放到`.bashrc`或`.bash_profile`这样的文件内。
    * 你可以把：`export CATALINA_OPTS="-javaagent:/path/to/atlassian-agent.jar ${CATALINA_OPTS}"`这样的命令放到服务安装所在`bin目录`下的`setenv.sh`或`setenv.bat（供windows使用）`中。
    * 你还可以直接命令行执行：`CATALINA_OPTS="-javaagent:/path/to/atlassian-agent.jar" /path/to/start-confluence.sh`来启动你的服务。
    * 或者你所知的其他修改环境变量的方法，但如果你机器上有无关的Tomcat服务，则不建议修改全局`CATALINA_OPTS`环境变量。
